@@ -1,0 +1,24 @@
+#!/bin/bash
+while :; do
+trap ctrl_c INT
+ctrl_c(){ echo -en "\e[31merror\e[0m"; }
+echo -en "\e[31m$(whoami)~$(date | awk '{print $4}') \e[2msearch/clear/exit\e[0m "; read ss
+c=$(echo "$ss" | awk '{print $1}')
+i=$(echo "$ss" | awk '{print $2}')
+
+if [[ $c == "search" ]]
+then 
+curl -s "https://www.shodan.io/search?query=$i" -o androids.txt
+cat androids.txt | grep "host" | awk '{print $3}' >> dumps.txt
+cat dumps.txt | grep "host" | tr '""<>/=' " " | awk '{print $3}'
+rm *.txt
+elif [[ $c == "clear" ]]
+then
+clear
+elif [[ $c == "exit" ]]
+then
+exit
+else
+echo -en ""
+fi
+done
