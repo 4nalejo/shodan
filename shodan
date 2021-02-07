@@ -1,13 +1,36 @@
 #!/bin/bash
-while :; do
 trap ctrl_c INT
 ctrl_c(){ echo -en "\e[31merror\e[0m"; }
-echo -en "\e[31m$(whoami)~$(date | awk '{print $4}') \e[2msearch/clear/exit\e[0m "; read ss
+banner(){
+clear
+echo -e "
+\e[31m.▄▄ ·  ▄ .▄      ·▄▄▄▄   ▄▄▄·  ▐ ▄ 
+▐█ ▀. ██▪▐█▪     ██▪ ██ ▐█ ▀█ •█▌▐█
+▄▀▀▀█▄██▀▐█ ▄█▀▄ ▐█· ▐█▌▄█▀▀█ ▐█▐▐▌
+▐█▄▪▐███▌▐▀▐█▌.▐▌██. ██ ▐█ ▪▐▌██▐█▌
+ ▀▀▀▀ ▀▀▀ · ▀█▄▀▪▀▀▀▀▀•  ▀  ▀ ▀▀ █▪\e[0m
+"
+}
+banner
+shodan(){
+while :;
+do
+echo -en "\e[31m$(whoami)~$(date | awk '{print $4}')\e[0m $ "; read ss
 c=$(echo "$ss" | awk '{print $1}')
 i=$(echo "$ss" | awk '{print $2}')
-
-if [[ $c == "search" ]]
-then 
+if [[ $c == "help" ]]
+then
+for i in $(seq 1 80); do echo -en "\e[31m=\e[0m" ; done ; echo -e ""
+echo
+echo "COMMANDS		DESCRIPTION		    USE"
+echo "search	        Search vulnerable hostess	search <word/if there are spaces use '+'>"
+echo "banner		Show the banner			none"
+echo "clear		Clean the screen		none"
+echo "exit		Get out of shodan		none"
+echo
+for i in $(seq 1 80); do echo -en "\e[31m=\e[0m" ; done ; echo -e ""
+elif [[ $c == "search" ]]
+then
 curl -s "https://www.shodan.io/search?query=$i" -o androids.txt
 cat androids.txt | grep "host" | awk '{print $3}' >> dumps.txt
 cat dumps.txt | grep "host" | tr '""<>/=' " " | awk '{print $3}'
@@ -15,10 +38,17 @@ rm *.txt
 elif [[ $c == "clear" ]]
 then
 clear
+elif [[ $c == "banner" ]]
+then
+banner
 elif [[ $c == "exit" ]]
 then
+echo -e "\e[31mComing out of shodan, thanks for using it :)\e[0m"; sleep 1
 exit
 else
-echo -en ""
+echo -e "help to see the help menu."
 fi
 done
+}
+
+shodan
